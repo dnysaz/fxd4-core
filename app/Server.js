@@ -79,7 +79,10 @@ if (process.env.APP_DEBUG !== 'true') {
  */
 app.use((req, res, next) => {
     const start = process.hrtime();
-    
+
+    res.locals.supabaseActive = !!(process.env.SUPABASE_URL && process.env.SUPABASE_KEY);
+    res.locals.useSupabase = process.env.USE_SUPABASE !== 'false';
+
     res.locals.appName = process.env.APP_NAME || 'fxd4.js';
     res.locals.appVersion = process.env.APP_VERSION || '0.0.0';
 
