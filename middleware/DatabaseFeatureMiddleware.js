@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
          * Pesan instruksi kamu tetap ada di sini.
          * Ini akan ditangkap oleh ExceptionHandler dan ditampilkan ke user.
          */
-        error.customMessage = `This section requires <strong>Supabase</strong>. 
+        error.statusText = `This section requires <strong>Supabase</strong>. 
             Please set <code>USE_SUPABASE=true</code> and provide your credentials 
             in the <code>.env</code> file.`;
 
