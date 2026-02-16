@@ -27,7 +27,6 @@ module.exports = (err, req, res, next) => {
     const statusMessage = statusMessages[statusCode] || 'An error occurred';
 
     if (isDebug) {
-        // Arahkan ke folder internal core/error/debug.hbs
         const debugViewPath = path.join(__dirname, '../views/errors/debug.hbs');
 
         return res.status(statusCode).render(debugViewPath, {
@@ -36,11 +35,11 @@ module.exports = (err, req, res, next) => {
             message: err.message,
             stack: err.stack,
             status: statusCode,
-            statusText: statusMessage,
+            // PERBAIKAN: Gunakan err.statusText jika ada, jika tidak gunakan mapping standar
+            statusText: err.statusText || statusMessage, 
             path: req.path,
             method: req.method,
             timestamp: new Date().toLocaleString(),
-            // Data Dinamis dari ENV untuk Debugger UI
             appName: process.env.APP_NAME || 'fxd4.js',
             appVersion: process.env.APP_VERSION || '0.0.0',
             nodeVersion: process.version
