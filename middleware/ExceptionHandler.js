@@ -5,6 +5,11 @@ const path = require('path');
  * Lokasi: core/Middleware/ExceptionHandler.js
  */
 module.exports = (err, req, res, next) => {
+    // --- 1. HANDLE FXD() DUMP (Paling Atas agar Cepat) ---
+    if (err.message === 'FXD4_DUMP') {
+        return res.status(200).send(err.dumpData);
+    }
+
     const isDebug = process.env.APP_DEBUG === 'true';
     const statusCode = err.status || 500;
 
@@ -26,6 +31,7 @@ module.exports = (err, req, res, next) => {
 
     const statusMessage = statusMessages[statusCode] || 'An error occurred';
 
+    // --- 2. TAMPILAN DEBUG (Development) ---
     if (isDebug) {
         const debugViewPath = path.join(__dirname, '../views/errors/debug.hbs');
 
@@ -35,7 +41,6 @@ module.exports = (err, req, res, next) => {
             message: err.message,
             stack: err.stack,
             status: statusCode,
-            // PERBAIKAN: Gunakan err.statusText jika ada, jika tidak gunakan mapping standar
             statusText: err.statusText || statusMessage, 
             path: req.path,
             method: req.method,
@@ -46,7 +51,7 @@ module.exports = (err, req, res, next) => {
         });
     }
 
-    // --- Tampilan Minimalis Production (Zero-Dependency) ---
+    // --- 3. TAMPILAN MINIMALIS (Production) ---
     const appName = process.env.APP_NAME || 'fxd4.js';
     const appVersion = process.env.APP_VERSION || '0.0.0';
 

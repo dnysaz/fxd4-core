@@ -1,23 +1,24 @@
 /**
  * DatabaseFeatureMiddleware - fxd4 Core Engine
+ * Optimized for High-Performance & Error Catching
  */
 module.exports = (req, res, next) => {
     const useSupabase = process.env.USE_SUPABASE === 'true';
+    const hasCredentials = process.env.SUPABASE_URL && process.env.SUPABASE_KEY;
 
-    if (!useSupabase) {
-        // Kita buat Error object
-        const error = new Error('Forbidden');
+    // Jika fitur diaktifkan tapi kredensial kosong, atau fitur dimatikan
+    if (!useSupabase || !hasCredentials) {
+        const error = new Error('Database Configuration Needed');
         error.status = 403;
         
         /**
-         * Pesan instruksi kamu tetap ada di sini.
-         * Ini akan ditangkap oleh ExceptionHandler dan ditampilkan ke user.
+         * Menggunakan format yang konsisten dengan ExceptionHandler.
+         * Kita berikan pesan yang jelas kenapa akses ditolak.
          */
-        error.statusText = `This section requires <strong>Supabase</strong>. 
-            Please set <code>USE_SUPABASE=true</code> and provide your credentials 
-            in the <code>.env</code> file.`;
+        error.statusText = !useSupabase 
+            ? 'Supabase feature is currently disabled.' 
+            : 'Supabase credentials (URL/KEY) are missing in .env.';
 
-        // Lempar ke central error handler
         return next(error);
     }
 
